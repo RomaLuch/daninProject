@@ -11,7 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-public class CatDaoImpl implements CatDao{
+public class CatDaoImpl implements CatDao {
     @Override
     public Cat findById(int id) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();

@@ -18,19 +18,19 @@ public class Program {
         herald.setName("herald");
         herald.setBirthday(Date.valueOf("2020-01-01"));
         herald.setBreed("scotland");
-        herald.setColor(Color.Grey);
+        herald.setColor(Color.GREY);
 
         Cat frederic = new Cat();
         frederic.setName("frederic");
         frederic.setBirthday(Date.valueOf("2019-08-08"));
         frederic.setBreed("england");
-        frederic.setColor(Color.Black);
+        frederic.setColor(Color.BLACK);
 
         Cat ramses = new Cat();
         ramses.setName("ramses");
         ramses.setBirthday(Date.valueOf("2021-05-05"));
         ramses.setBreed("african");
-        ramses.setColor(Color.White);
+        ramses.setColor(Color.WHITE);
 
         managerService.saveCat(herald);
         managerService.saveCat(frederic);
