@@ -1,0 +1,34 @@
+### all cats
+
+GET http://localhost:8080/cats
+Accept: application/json
+
+### cats by name
+
+GET http://localhost:8080/cats/cat?name=John
+Accept: application/json
+
+### owner by name
+
+GET http://localhost:8080/cats/cat?name=John
+Accept: application/json
+
+### all cats by color
+
+GET http://localhost:8080/cats/filter?color=black
+Accept: application/json
+
+### all owners
+
+GET http://localhost:8080/owners
+Accept: application/json
+
+### owner by name
+
+GET http://localhost:8080/owners/owner?name=Elvis Presley
+Accept: application/json
+
+### owner by name
+
+GET http://localhost:8080/owners/49
+Accept: application/json

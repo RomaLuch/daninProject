@@ -1,87 +1,86 @@
 package ru.itmo.kotiki.service;
 
-import ru.itmo.kotiki.dao.CatDaoImpl;
-import ru.itmo.kotiki.dao.OwnerDaoImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ru.itmo.kotiki.dao.CatDao;
+import ru.itmo.kotiki.dao.OwnerDao;
 import ru.itmo.kotiki.dao.entity.Cat;
 import ru.itmo.kotiki.dao.entity.Owner;
+import ru.itmo.kotiki.service.dto.OwnerDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+@Service
 public class OwnerService {
 
-    private OwnerDaoImpl ownerDao = new OwnerDaoImpl();
-    private CatDaoImpl catDao = new CatDaoImpl();
-    private ManagerService managerService = new ManagerService();
+    private final OwnerDao ownerDao;
+    private final CatDao catDao;
+    private final CatService catService;
 
-    public OwnerService(){
+    @Autowired
+    public OwnerService(OwnerDao ownerDao, CatDao catDao, CatService catService) {
+        this.ownerDao = ownerDao;
+        this.catDao = catDao;
+        this.catService = catService;
     }
 
-    public Owner findOwner(int id){
-        return ownerDao.findById(id);
+    public OwnerDto findOwner(int id) {
+        return map(ownerDao.findById(id).get());
     }
 
-    public void saveOwner(Owner owner){
+    public void saveOwner(Owner owner) {
         ownerDao.save(owner);
     }
 
-    public void updateOwner(Owner owner){
-        ownerDao.update(owner);
+    public void updateOwner(Owner owner) {
+        ownerDao.save(owner);
     }
 
-    public void deleteOwner(Owner owner){
-        ownerDao.delete(owner);
+    public List<OwnerDto> findAllOwners() {
+        return StreamSupport.stream(ownerDao.findAll().spliterator(), false)
+                .map(this::map)
+                .collect(Collectors.toList());
     }
 
-    public List<Owner> findAllOwners(){
-        return ownerDao.findAll();
+    public OwnerDto findOwnerByName(String name) {
+        return map(ownerDao.findByName(name));
     }
 
-    public Owner findOwnerByName(String name){
-        Owner res = null;
-        for (Owner owner : findAllOwners()){
-            if (Objects.equals(owner.getName(), name)){
-                res = owner;
-            }
-        }
-        return res;
-    }
-
-    public List<Cat> findFreeCats(){
+    public List<Cat> findFreeCats() {
         List<Cat> result = new ArrayList<>();
-        for(Cat cat : catDao.findAll()){
-            if(cat.getOwner() == null){
+        for (Cat cat : catDao.findAll()) {
+            if (cat.getOwner() == null) {
                 result.add(cat);
             }
         }
         return result;
     }
 
-    public List<Cat> findCatsByOwnerId(int id){
-        List<Cat> result = new ArrayList<>();
-        for(Cat cat : catDao.findAll()){
-            if(cat.getOwner().getId() == id){
-                result.add(cat);
-            }
-        }
-        return result;
-    }
-
-    public void takeCat(Owner owner, Cat cat){
+    public void takeCat(Owner owner, Cat cat) {
         owner.addCat(cat);
         this.updateOwner(owner);
-        managerService.updateCat(cat);
+        catService.updateCat(cat);
     }
 
-    public void returnCat(Owner owner, Cat cat){
-        try{
+    public void returnCat(Owner owner, Cat cat) {
+        try {
             owner.removeCat(cat);
             cat.setOwner(null);
             this.updateOwner(owner);
-            managerService.updateCat(cat);
+            catService.updateCat(cat);
         } catch (Exception e) {
             System.out.print(e.toString());
         }
+    }
+
+    private OwnerDto map(Owner owner) {
+        return OwnerDto.builder()
+                .id(owner.getId())
+                .name(owner.getName())
+                .birthday(owner.getBirthday())
+                .build();
     }
 }

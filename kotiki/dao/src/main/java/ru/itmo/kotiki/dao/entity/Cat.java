@@ -1,12 +1,29 @@
 package ru.itmo.kotiki.dao.entity;
 
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.sql.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "cats")
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString(exclude = "owner")
 public class Cat {
 
     @Id
@@ -31,78 +48,5 @@ public class Cat {
     private Owner owner;
 
     public Cat(){
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getBreed() {
-        return breed;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setBreed(String breed) {
-        this.breed = breed;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Cat cat = (Cat) o;
-        return id == cat.id && Objects.equals(breed, cat.breed) && Objects.equals(name, cat.name) && Objects.equals(birthday, cat.birthday) && Objects.equals(owner, cat.owner) && Objects.equals(color, cat.color);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, breed, name, birthday, owner, color);
-    }
-
-    @Override
-    public String toString() {
-        return "Cat{" +
-                "id=" + id +
-                ", breed='" + breed + '\'' +
-                ", name='" + name + '\'' +
-                ", birthday=" + birthday +
-                ", owner=" + owner +
-                ", color=" + color +
-                '}';
     }
 }

@@ -1,13 +1,11 @@
 package ru.itmo.kotiki.dao;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import ru.itmo.kotiki.dao.entity.Owner;
 
-import java.util.List;
+@Repository
+public interface OwnerDao extends CrudRepository<Owner, Integer> {
 
-public interface OwnerDao {
-    public Owner findById(int id);
-    public void save(Owner owner);
-    public void update(Owner owner);
-    public void delete(Owner owner);
-    public List<Owner> findAll();
+    Owner findByName(String name);
 }

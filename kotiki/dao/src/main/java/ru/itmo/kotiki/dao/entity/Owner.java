@@ -1,14 +1,28 @@
 package ru.itmo.kotiki.dao.entity;
 
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "owners")
+@Getter
+@Setter
+@ToString(exclude = "cats")
+@EqualsAndHashCode
 public class Owner {
 
     @Id
@@ -41,59 +55,5 @@ public class Owner {
         cats.remove(cat);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setCats(List<Cat> cats) {
-        this.cats = cats;
-    }
-
-    public List<Cat> getCats() {
-        return cats;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Owner owner = (Owner) o;
-        return id == owner.id && Objects.equals(name, owner.name) && Objects.equals(birthday, owner.birthday);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, birthday);
-    }
-
-    @Override
-    public String toString() {
-        return "Owner{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", birthday=" + birthday +
-                ", cats=" + cats +
-                '}';
-    }
 }
 
