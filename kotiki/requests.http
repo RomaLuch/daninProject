@@ -1,3 +1,10 @@
+POST http://localhost:8080/login
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; username="Elvis"; password="passsword"
+
+###
 ### all cats
 
 GET http://localhost:8080/cats
@@ -32,3 +39,10 @@ Accept: application/json
 
 GET http://localhost:8080/owners/49
 Accept: application/json
+
+###
+
+GET http://localhost:8080/owners
+Cookie: JSESSIONID=977F8CEA8894F00F842DF563CFE494AD
+
+
