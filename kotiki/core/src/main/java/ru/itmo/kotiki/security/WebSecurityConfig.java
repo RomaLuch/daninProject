@@ -24,12 +24,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/").hasRole("ADMIN")
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/**").hasAuthority("ADMIN")
                 .antMatchers("/owners").hasAuthority("ADMIN")
                 .antMatchers("/owners/owner").hasAuthority("ADMIN")
                 .antMatchers("/cats").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/cats/cat").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/cats/cat/**").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()
@@ -39,11 +41,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 }
 
-//        GET http://localhost:8080/cats
-//        GET http://localhost:8080/cats/cat?name=John
-//        GET http://localhost:8080/cats/cat?name=John
-//        GET http://localhost:8080/cats/filter?color=black
-//        GET http://localhost:8080/owners
-//        GET http://localhost:8080/owners/owner?name=Elvis Presley
-//        GET http://localhost:8080/owners/49
 

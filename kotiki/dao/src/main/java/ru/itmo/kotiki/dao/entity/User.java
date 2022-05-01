@@ -21,6 +21,14 @@ import javax.persistence.Table;
 @Table(name = "users")
 public class User {
 
+    public User(String name, String password, boolean enabled, Role role, Owner owner) {
+        this.name = name;
+        this.password = password;
+        this.enabled = enabled;
+        this.role = role;
+        this.owner = owner;
+    }
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

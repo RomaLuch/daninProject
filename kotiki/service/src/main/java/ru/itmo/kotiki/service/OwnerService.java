@@ -31,8 +31,8 @@ public class OwnerService {
         return map(ownerDao.findById(id).get());
     }
 
-    public void saveOwner(Owner owner) {
-        ownerDao.save(owner);
+    public Owner saveOwner(Owner owner) {
+        return ownerDao.save(owner);
     }
 
     public void updateOwner(Owner owner) {

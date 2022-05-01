@@ -22,24 +22,17 @@ public class CatService {
 
     public CatDto findCat(int id) {
         Cat cat = catDao.findById(id).get();
-        return CatDto.builder()
-                .id(cat.getId())
-                .breed(cat.getBreed())
-                .name(cat.getName())
-                .birthday(cat.getBirthday())
-                .color(cat.getColor())
-                .build();
+        return map(cat);
+    }
+
+    public CatDto findCatByIdAndOwnerId(int id, int ownerId) {
+        Cat cat = catDao.findByIdAndOwnerId(id, ownerId);
+        return map(cat);
     }
 
     public CatDto findCatByName(String name) {
         Cat cat = catDao.findByName(name);
-        return CatDto.builder()
-                .id(cat.getId())
-                .breed(cat.getBreed())
-                .name(cat.getName())
-                .birthday(cat.getBirthday())
-                .color(cat.getColor())
-                .build();
+        return map(cat);
     }
 
     public void saveCat(Cat cat) {
@@ -59,13 +52,16 @@ public class CatService {
 
         return casts
                 .stream()
-                .map(cat -> CatDto.builder()
-                        .id(cat.getId())
-                        .breed(cat.getBreed())
-                        .name(cat.getName())
-                        .birthday(cat.getBirthday())
-                        .color(cat.getColor())
-                        .build())
+                .map(this::map)
+                .toList();
+    }
+
+    public List<CatDto> findAllCatsByOwnerId(int ownerId) {
+        List<Cat> casts = catDao.findAllByOwnerId(ownerId).stream().toList();
+
+        return casts
+                .stream()
+                .map(this::map)
                 .toList();
     }
 
@@ -82,5 +78,30 @@ public class CatService {
                         .color(cat.getColor())
                         .build())
                 .toList();
+    }
+
+    public List<CatDto> findAllCatsByColorAndOwnerId(String color, int ownerId) {
+
+        return findAllCatsByOwnerId(ownerId)
+                .stream()
+                .filter(cat -> cat.getColor().equals(Color.valueOf(color.toUpperCase())))
+                .map(cat -> CatDto.builder()
+                        .id(cat.getId())
+                        .breed(cat.getBreed())
+                        .name(cat.getName())
+                        .birthday(cat.getBirthday())
+                        .color(cat.getColor())
+                        .build())
+                .toList();
+    }
+
+    private CatDto map(Cat cat) {
+        return CatDto.builder()
+                .id(cat.getId())
+                .breed(cat.getBreed())
+                .name(cat.getName())
+                .birthday(cat.getBirthday())
+                .color(cat.getColor())
+                .build();
     }
 }
