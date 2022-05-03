@@ -1,24 +1,25 @@
 package ru.itmo.kotiki.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import ru.itmo.kotiki.dao.CatDao;
 import ru.itmo.kotiki.dao.entity.Cat;
 import ru.itmo.kotiki.dao.entity.Color;
 import ru.itmo.kotiki.service.dto.CatDto;
+import ru.itmo.kotiki.service.dto.RabbitQuery;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Service
+@RequiredArgsConstructor
 public class CatService {
 
     private final CatDao catDao;
-
-    @Autowired
-    public CatService(CatDao catDao) {
-        this.catDao = catDao;
-    }
+    private final ObjectMapper objectMapper;
 
     public CatDto findCat(int id) {
         Cat cat = catDao.findById(id).get();
@@ -63,6 +64,13 @@ public class CatService {
                 .stream()
                 .map(this::map)
                 .toList();
+    }
+
+    @RabbitListener(queues = "myQueue")
+    public void findAllCatsByOwnerIdRabbit(String message) throws JsonProcessingException {
+        RabbitQuery rabbitQuery = objectMapper.readValue(message, RabbitQuery.class);
+        List<Cat> casts = catDao.findAllByOwnerId(rabbitQuery.ownerId()).stream().toList();
+
     }
 
     public List<CatDto> findAllCatsBy(String color) {

@@ -1,6 +1,9 @@
 package ru.itmo.kotiki.cpntroller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -11,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.itmo.kotiki.service.CatService;
 import ru.itmo.kotiki.service.dto.CatDto;
 import ru.itmo.kotiki.service.dto.MyUserDetails;
+import ru.itmo.kotiki.service.dto.OperationType;
+import ru.itmo.kotiki.service.dto.RabbitQuery;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -21,11 +25,15 @@ import java.util.List;
 public class CatController {
 
     private final CatService catService;
+    private final RabbitTemplate rabbitTemplate;
+    private final ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<List<CatDto>> getAll() {
+    public ResponseEntity<List<CatDto>> getAll() throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
+        RabbitQuery message = new RabbitQuery(OperationType.GET_ALL, ownerId, null);
+        rabbitTemplate.convertAndSend("myQueue", objectMapper.writeValueAsString(message));
         List<CatDto> allCats = catService.findAllCatsByOwnerId(ownerId);
         return ResponseEntity.ok(allCats);
     }

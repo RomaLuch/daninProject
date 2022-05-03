@@ -5,6 +5,12 @@ spring:
     password: daniil801
     driverClassname: org.postgresql.Driver
 
+  rabbitmq:
+    port: 5672
+    host: 'localhost'
+    username: user
+    password: password
+
 logging:
   level:
     root: info
