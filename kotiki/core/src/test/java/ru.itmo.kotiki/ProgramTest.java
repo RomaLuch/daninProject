@@ -1,5 +1,6 @@
 package ru.itmo.kotiki;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -10,10 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.itmo.kotiki.dao.CatDao;
 import ru.itmo.kotiki.dao.OwnerDao;
-import ru.itmo.kotiki.dao.entity.Cat;
-import ru.itmo.kotiki.dao.entity.Color;
 import ru.itmo.kotiki.dao.entity.Owner;
-import ru.itmo.kotiki.service.CatService;
 import ru.itmo.kotiki.service.OwnerService;
 
 import java.sql.Date;
@@ -26,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-@ContextConfiguration(classes = {OwnerService.class, CatService.class})
+@ContextConfiguration(classes = {OwnerService.class, ObjectMapper.class})
 class ProgramTest {
 
     @MockBean
@@ -38,26 +36,9 @@ class ProgramTest {
     @Autowired
     OwnerService ownerService;
 
-    @Autowired
-    CatService catService;
-
     @Test
     public void contextCheck() {
         assertNotNull(ownerService);
-        assertNotNull(catService);
-    }
-
-    @Test
-    void saveCat_InvokeDaoSave() {
-
-        Cat herald = new Cat();
-        herald.setName("herald");
-        herald.setBirthday(Date.valueOf("2020-01-01"));
-        herald.setBreed("scotland");
-        herald.setColor(Color.GREY);
-
-        catService.saveCat(herald);
-        Mockito.verify(catDao).save(eq(herald));
     }
 
     @Test
@@ -78,53 +59,6 @@ class ProgramTest {
         when(ownerDao.findByName(eq(john.getName()))).thenReturn(john);
 
         assertEquals(john.getName(), ownerService.findOwnerByName("john").getName());
-    }
-
-    @Test
-    void findCatByName_catFinds() {
-
-        Cat herald = new Cat();
-        herald.setName("herald");
-        herald.setBirthday(Date.valueOf("2020-01-01"));
-        herald.setBreed("scotland");
-        herald.setColor(Color.GREY);
-
-        Cat frederic = new Cat();
-        frederic.setName("frederic");
-        frederic.setBirthday(Date.valueOf("2019-08-08"));
-        frederic.setBreed("england");
-        frederic.setColor(Color.BLACK);
-
-        when(catDao.findByName(eq(herald.getName()))).thenReturn(herald);
-        when(catDao.findByName(eq(frederic.getName()))).thenReturn(frederic);
-
-        assertEquals(frederic.getName(), catService.findCatByName("frederic").getName());
-    }
-
-    @Test
-    void findAllCats_AllCatsFinds() {
-
-        Cat herald = new Cat();
-        herald.setName("herald");
-        herald.setBirthday(Date.valueOf("2020-01-01"));
-        herald.setBreed("scotland");
-        herald.setColor(Color.GREY);
-
-        Cat frederic = new Cat();
-        frederic.setName("frederic");
-        frederic.setBirthday(Date.valueOf("2019-08-08"));
-        frederic.setBreed("england");
-        frederic.setColor(Color.BLACK);
-
-        Cat ramses = new Cat();
-        ramses.setName("ramses");
-        ramses.setBirthday(Date.valueOf("2021-05-05"));
-        ramses.setBreed("african");
-        ramses.setColor(Color.WHITE);
-
-        when(catDao.findAll()).thenReturn(List.of(herald, frederic, ramses));
-
-        assertEquals(catService.findAllCats().size(), 3);
     }
 
     @Test

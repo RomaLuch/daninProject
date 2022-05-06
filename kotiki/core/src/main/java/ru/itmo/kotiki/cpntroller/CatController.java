@@ -1,6 +1,7 @@
 package ru.itmo.kotiki.cpntroller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.itmo.kotiki.service.CatService;
 import ru.itmo.kotiki.service.dto.CatDto;
 import ru.itmo.kotiki.service.dto.MyUserDetails;
 import ru.itmo.kotiki.service.dto.OperationType;
@@ -24,7 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CatController {
 
-    private final CatService catService;
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
@@ -32,33 +31,44 @@ public class CatController {
     public ResponseEntity<List<CatDto>> getAll() throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
-        RabbitQuery message = new RabbitQuery(OperationType.GET_ALL, ownerId, null);
-        rabbitTemplate.convertAndSend("myQueue", objectMapper.writeValueAsString(message));
-        List<CatDto> allCats = catService.findAllCatsByOwnerId(ownerId);
-        return ResponseEntity.ok(allCats);
+
+        RabbitQuery message = new RabbitQuery(OperationType.GET_ALL, ownerId, null, null, null);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+
+        return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, new TypeReference<>() {}));
     }
 
     @GetMapping("/cat")
-    public ResponseEntity<CatDto> getByName(@RequestParam("name") String name) {
-        CatDto cat = catService.findCatByName(name);
-        return ResponseEntity.ok(cat);
+    public ResponseEntity<CatDto> getByName(@RequestParam("name") String name) throws JsonProcessingException {
+        MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        int ownerId = myUserDetails.getUser().getOwner().getId();
+
+        RabbitQuery message = new RabbitQuery(OperationType.GET_BY_NAME, ownerId, null, name, null);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+
+        return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, CatDto.class));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CatDto> getById(@PathVariable("id") Integer id) {
+    public ResponseEntity<CatDto> getById(@PathVariable("id") Integer id) throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
 
-        CatDto cat = catService.findCatByIdAndOwnerId(id, ownerId);
-        return ResponseEntity.ok(cat);
+        RabbitQuery message = new RabbitQuery(OperationType.GET_BY_ID, ownerId, id, null, null);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+
+        return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, CatDto.class));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CatDto>> filter(@RequestParam("color") String color) {
+    public ResponseEntity<List<CatDto>> filter(@RequestParam("color") String color) throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
 
-        List<CatDto> filteredCats = catService.findAllCatsByColorAndOwnerId(color, ownerId);
-        return ResponseEntity.ok(filteredCats);
+        RabbitQuery message = new RabbitQuery(OperationType.FILTER, ownerId, null, null, color);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+
+        return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, new TypeReference<>() {}));
+
     }
 }
