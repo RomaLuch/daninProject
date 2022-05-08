@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.itmo.kotiki.service.dto.CatDto;
 import ru.itmo.kotiki.service.dto.MyUserDetails;
 import ru.itmo.kotiki.service.dto.OperationType;
-import ru.itmo.kotiki.service.dto.RabbitQuery;
+import ru.itmo.kotiki.service.dto.RabbitCatQuery;
 
 import java.util.List;
 
@@ -32,8 +32,8 @@ public class CatController {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
 
-        RabbitQuery message = new RabbitQuery(OperationType.GET_ALL, ownerId, null, null, null);
-        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+        RabbitCatQuery message = new RabbitCatQuery(OperationType.GET_ALL, ownerId, null, null, null);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, new TypeReference<>() {}));
     }
@@ -43,8 +43,8 @@ public class CatController {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
 
-        RabbitQuery message = new RabbitQuery(OperationType.GET_BY_NAME, ownerId, null, name, null);
-        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+        RabbitCatQuery message = new RabbitCatQuery(OperationType.GET_BY_NAME, ownerId, null, name, null);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, CatDto.class));
     }
@@ -54,8 +54,8 @@ public class CatController {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
 
-        RabbitQuery message = new RabbitQuery(OperationType.GET_BY_ID, ownerId, id, null, null);
-        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+        RabbitCatQuery message = new RabbitCatQuery(OperationType.GET_BY_ID, ownerId, id, null, null);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, CatDto.class));
     }
@@ -65,8 +65,8 @@ public class CatController {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int ownerId = myUserDetails.getUser().getOwner().getId();
 
-        RabbitQuery message = new RabbitQuery(OperationType.FILTER, ownerId, null, null, color);
-        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("myQueue", objectMapper.writeValueAsString(message));
+        RabbitCatQuery message = new RabbitCatQuery(OperationType.FILTER, ownerId, null, null, color);
+        String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, new TypeReference<>() {}));
 
