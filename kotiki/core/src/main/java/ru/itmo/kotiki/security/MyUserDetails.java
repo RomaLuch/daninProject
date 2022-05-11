@@ -1,4 +1,4 @@
-package ru.itmo.kotiki.service.dto;
+package ru.itmo.kotiki.security;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

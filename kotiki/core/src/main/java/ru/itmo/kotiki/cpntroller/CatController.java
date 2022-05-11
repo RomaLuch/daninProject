@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.itmo.kotiki.service.dto.CatDto;
-import ru.itmo.kotiki.service.dto.MyUserDetails;
+import ru.itmo.kotiki.security.MyUserDetails;
 import ru.itmo.kotiki.service.dto.OperationType;
 import ru.itmo.kotiki.service.dto.RabbitCatQuery;
 

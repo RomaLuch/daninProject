@@ -37,7 +37,7 @@ Accept: application/json
 
 POST http://localhost:8080/user
 Content-Type: application/json
-Cookie: JSESSIONID=66A8D8DAFC7AF10A4F812122471D0F19
+Cookie: JSESSIONID=10AB3974AEAD7ADAF1425C3063EFEE87
 
 {
 "name": "newUser",
