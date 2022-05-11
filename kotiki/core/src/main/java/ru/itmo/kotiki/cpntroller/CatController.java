@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.itmo.kotiki.service.dto.CatDto;
+import ru.itmo.kotiki.cpntroller.dto.CatDto;
+import ru.itmo.kotiki.cpntroller.dto.OperationType;
+import ru.itmo.kotiki.cpntroller.dto.RabbitCatMessage;
 import ru.itmo.kotiki.security.MyUserDetails;
-import ru.itmo.kotiki.service.dto.OperationType;
-import ru.itmo.kotiki.service.dto.RabbitCatQuery;
 
 import java.util.List;
 
@@ -30,9 +30,9 @@ public class CatController {
     @GetMapping
     public ResponseEntity<List<CatDto>> getAll() throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        int ownerId = myUserDetails.getUser().getOwner().getId();
+        int ownerId = myUserDetails.getUser().ownerId();
 
-        RabbitCatQuery message = new RabbitCatQuery(OperationType.GET_ALL, ownerId, null, null, null);
+        RabbitCatMessage message = new RabbitCatMessage(OperationType.GET_ALL, ownerId, null, null, null);
         String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, new TypeReference<>() {}));
@@ -41,9 +41,9 @@ public class CatController {
     @GetMapping("/cat")
     public ResponseEntity<CatDto> getByName(@RequestParam("name") String name) throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        int ownerId = myUserDetails.getUser().getOwner().getId();
+        int ownerId = myUserDetails.getUser().ownerId();
 
-        RabbitCatQuery message = new RabbitCatQuery(OperationType.GET_BY_NAME, ownerId, null, name, null);
+        RabbitCatMessage message = new RabbitCatMessage(OperationType.GET_BY_NAME, ownerId, null, name, null);
         String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, CatDto.class));
@@ -52,9 +52,9 @@ public class CatController {
     @GetMapping("/{id}")
     public ResponseEntity<CatDto> getById(@PathVariable("id") Integer id) throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        int ownerId = myUserDetails.getUser().getOwner().getId();
+        int ownerId = myUserDetails.getUser().ownerId();
 
-        RabbitCatQuery message = new RabbitCatQuery(OperationType.GET_BY_ID, ownerId, id, null, null);
+        RabbitCatMessage message = new RabbitCatMessage(OperationType.GET_BY_ID, ownerId, id, null, null);
         String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, CatDto.class));
@@ -63,9 +63,9 @@ public class CatController {
     @GetMapping("/filter")
     public ResponseEntity<List<CatDto>> filter(@RequestParam("color") String color) throws JsonProcessingException {
         MyUserDetails myUserDetails = (MyUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        int ownerId = myUserDetails.getUser().getOwner().getId();
+        int ownerId = myUserDetails.getUser().ownerId();
 
-        RabbitCatQuery message = new RabbitCatQuery(OperationType.FILTER, ownerId, null, null, color);
+        RabbitCatMessage message = new RabbitCatMessage(OperationType.FILTER, ownerId, null, null, color);
         String rabbitResponse = (String) rabbitTemplate.convertSendAndReceive("catQueue", objectMapper.writeValueAsString(message));
 
         return ResponseEntity.ok(objectMapper.readValue(rabbitResponse, new TypeReference<>() {}));

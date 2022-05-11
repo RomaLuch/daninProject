@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.itmo.kotiki.service.dto.OperationType;
-import ru.itmo.kotiki.service.dto.OwnerDto;
-import ru.itmo.kotiki.service.dto.RabbitOwnerMessage;
+import ru.itmo.kotiki.cpntroller.dto.OperationType;
+import ru.itmo.kotiki.cpntroller.dto.OwnerDto;
+import ru.itmo.kotiki.cpntroller.dto.RabbitOwnerMessage;
 
 import java.util.List;
 

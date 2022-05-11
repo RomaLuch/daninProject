@@ -9,7 +9,7 @@ import ru.itmo.kotiki.dao.CatDao;
 import ru.itmo.kotiki.dao.entity.Cat;
 import ru.itmo.kotiki.dao.entity.Color;
 import ru.itmo.kotiki.service.dto.CatDto;
-import ru.itmo.kotiki.service.dto.RabbitCatQuery;
+import ru.itmo.kotiki.service.dto.RabbitCatMessage;
 
 import java.util.List;
 
@@ -22,19 +22,19 @@ public class RabbitCatConsumer {
 
     @RabbitListener(queues = "catQueue")
     public String dispatch(String message) throws JsonProcessingException {
-        RabbitCatQuery rabbitCatQuery = objectMapper.readValue(message, RabbitCatQuery.class);
-        switch (rabbitCatQuery.operationType()) {
+        RabbitCatMessage rabbitCatMessage = objectMapper.readValue(message, RabbitCatMessage.class);
+        switch (rabbitCatMessage.operationType()) {
             case GET_ALL -> {
-                return getAll(rabbitCatQuery.ownerId());
+                return getAll(rabbitCatMessage.ownerId());
             }
             case GET_BY_NAME -> {
-                return getByName(rabbitCatQuery.name(), rabbitCatQuery.ownerId());
+                return getByName(rabbitCatMessage.name(), rabbitCatMessage.ownerId());
             }
             case GET_BY_ID -> {
-                return getById(rabbitCatQuery.entityId(), rabbitCatQuery.ownerId());
+                return getById(rabbitCatMessage.entityId(), rabbitCatMessage.ownerId());
             }
             case FILTER -> {
-                return filterBy(rabbitCatQuery.color(), rabbitCatQuery.ownerId());
+                return filterBy(rabbitCatMessage.color(), rabbitCatMessage.ownerId());
             }
         }
         return "";

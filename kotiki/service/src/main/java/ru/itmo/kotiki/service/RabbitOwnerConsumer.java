@@ -15,6 +15,7 @@ import ru.itmo.kotiki.dao.entity.User;
 import ru.itmo.kotiki.service.dto.AuthUser;
 import ru.itmo.kotiki.service.dto.OwnerDto;
 import ru.itmo.kotiki.service.dto.RabbitOwnerMessage;
+import ru.itmo.kotiki.service.dto.UserResponseMessage;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -36,6 +37,9 @@ public class RabbitOwnerConsumer {
             case GET_ALL -> {
                 return getAll();
             }
+            case GET_USER_BY_NAME -> {
+                return getUserByName(rabbitOwnerMessage.name());
+            }
             case GET_BY_NAME -> {
                 return getByName(rabbitOwnerMessage.name());
             }
@@ -49,6 +53,12 @@ public class RabbitOwnerConsumer {
         return "";
     }
 
+    private String getUserByName(String username) throws JsonProcessingException {
+        User user = userDao.findByName(username);
+
+        return objectMapper.writeValueAsString(new UserResponseMessage(user.getName(), user.getPassword(), user.isEnabled(), user.getRole().getName(), user.getOwner().getId()));
+    }
+
     private String create(AuthUser user) throws JsonProcessingException {
 
         try {
@@ -60,10 +70,10 @@ public class RabbitOwnerConsumer {
         }
         catch (Exception e) {
             e.printStackTrace();
-            return "{\"result\":\"user not created\"}";
+            return "user not created";
         }
 
-        return objectMapper.writeValueAsString("{\"result\":\"user created\"}");
+        return objectMapper.writeValueAsString("user created");
     }
 
     private String getById(Integer entityId) throws JsonProcessingException {

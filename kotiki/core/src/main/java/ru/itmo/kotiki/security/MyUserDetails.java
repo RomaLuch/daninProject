@@ -4,8 +4,8 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.itmo.kotiki.dao.entity.Role;
-import ru.itmo.kotiki.dao.entity.User;
+import ru.itmo.kotiki.cpntroller.dto.Roles;
+import ru.itmo.kotiki.cpntroller.dto.UserResponseMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,19 +15,19 @@ import java.util.Set;
 @Data
 public class MyUserDetails implements UserDetails {
 
-    private User user;
+    private UserResponseMessage user;
 
-    public MyUserDetails(User user) {
+    public MyUserDetails(UserResponseMessage user) {
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<Role> roles = Set.of(user.getRole());
+        Set<Roles> roles = Set.of(user.role());
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
+        for (Roles role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.name()));
         }
 
         return authorities;
@@ -35,12 +35,12 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.password();
     }
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return user.name();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return user.enabled();
     }
 
 }

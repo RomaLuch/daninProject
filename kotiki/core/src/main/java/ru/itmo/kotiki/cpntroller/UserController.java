@@ -10,9 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.itmo.kotiki.service.dto.AuthUser;
-import ru.itmo.kotiki.service.dto.OperationType;
-import ru.itmo.kotiki.service.dto.RabbitOwnerMessage;
+import ru.itmo.kotiki.cpntroller.dto.AuthUser;
+import ru.itmo.kotiki.cpntroller.dto.OperationType;
+import ru.itmo.kotiki.cpntroller.dto.RabbitOwnerMessage;
 
 @Controller
 @RequestMapping("/user")

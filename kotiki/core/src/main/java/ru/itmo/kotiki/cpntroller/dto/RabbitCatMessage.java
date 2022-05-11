@@ -1,6 +1,6 @@
-package ru.itmo.kotiki.service.dto;
+package ru.itmo.kotiki.cpntroller.dto;
 
-public record RabbitCatQuery(
+public record RabbitCatMessage(
         OperationType operationType,
         Integer ownerId,
         Integer entityId,
