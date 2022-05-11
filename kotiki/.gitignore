@@ -1,6 +1,6 @@
 /target
-/dao/target
-/service/target
-/core/target
 /.idea
 *.iml
+/**/target
+/**/.idea
+/**/*.iml
