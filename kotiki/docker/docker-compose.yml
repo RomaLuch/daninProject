@@ -1,0 +1,70 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: daniil801
+      POSTGRES_DB: postgres
+    ports:
+      - 15432:5432
+
+  rabitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - 15672:15672
+      - 5672:5672
+
+  kotiki-web:
+    container_name: kotiki-web
+    build:
+      context: ../kotiki-web/docker
+#      dockerfile: Dockerfile
+#    platform: linux/amd64
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/postgres
+      - SPRING_JPA_DATABASE-PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING.RABBITMQ.HOST=rabitmq
+    depends_on:
+      - db
+      - rabitmq
+    image: kotiki-web:latest
+    ports:
+      - 8080:8080
+
+  kotiki-users:
+    container_name: kotiki-users
+    build:
+      context: ../userDao/docker
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/postgres
+      - SPRING_JPA_DATABASE-PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING.RABBITMQ.HOST=rabitmq
+
+    #      dockerfile: Dockerfile
+#    platform: linux/amd64
+    depends_on:
+      - db
+      - rabitmq
+    image: kotiki-user:latest
+
+  kotiki-cats:
+    container_name: kotiki-cats
+    build:
+      context: ../catDao/docker
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/postgres
+      - SPRING_JPA_DATABASE-PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING.RABBITMQ.HOST=rabitmq
+    depends_on:
+      - db
+      - rabitmq
+#      dockerfile: Dockerfile
+#    platform: linux/amd64
+    image: kotiki-cats:latest
